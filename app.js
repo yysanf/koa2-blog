@@ -11,6 +11,7 @@ const index = require('./routes/index')
 const users = require('./routes/users')
 const article = require('./routes/article')
 const category = require('./routes/category')
+const comment = require('./routes/comment')
 
 const errors = require('./lib/http-exception')
 global.errs = errors
@@ -49,6 +50,7 @@ app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(article.routes(), article.allowedMethods())
 app.use(category.routes(), category.allowedMethods())
+app.use(comment.routes(), comment.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
