@@ -10,7 +10,7 @@ router.post('/comment/create', async (ctx, next) => {
     const data = ctx.request.body
     await new CommentValidator().validate(data)
     const comm = await comment.create(data)
-    ctx.body = res.json(comm, '新增分类成功')
+    ctx.body = res.json(comm, '新增评论成功')
 })
 
 // 删
