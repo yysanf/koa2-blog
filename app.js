@@ -1,62 +1,44 @@
 const Koa = require('koa')
 const app = new Koa()
-const views = require('koa-views')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 
 const catchErr = require('./middlewares/exception')
-const index = require('./routes/index')
-const users = require('./routes/users')
-const article = require('./routes/article')
-const category = require('./routes/category')
-const comment = require('./routes/comment')
-const reply = require('./routes/reply')
 
-const errors = require('./lib/http-exception')
-global.errs = errors
+const InitManager = require('./core/init')
 
 // error handler
-onerror(app)
+onerror(app, {
+  json(err, ctx) {
+    const msg = err.message ? err.message : ''
+    if (msg) {
+      ctx.body.msg = `server error: ${msg}`
+    }
+  },
+  accepts: function() {
+    return 'json'
+  },
+})
 
 // middlewares
 app.use(
-    bodyparser({
-        enableTypes: ['json', 'form', 'text']
-    })
+  bodyparser({
+    enableTypes: ['json', 'form', 'text'],
+  })
 )
+
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
-
-app.use(
-    views(__dirname + '/views', {
-        extension: 'pug'
-    })
-)
-
 app.use(catchErr)
 
-// logger
-app.use(async (ctx, next) => {
-    const start = new Date()
-    await next()
-    const ms = new Date() - start
-    console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-})
-
-// routes
-app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
-app.use(article.routes(), article.allowedMethods())
-app.use(category.routes(), category.allowedMethods())
-app.use(comment.routes(), comment.allowedMethods())
-app.use(reply.routes(), reply.allowedMethods())
+InitManager.initCore(app)
 
 // error-handling
 app.on('error', (err, ctx) => {
-    console.error('server error', err, ctx)
+  console.error('server error', err, ctx)
 })
 
 module.exports = app
