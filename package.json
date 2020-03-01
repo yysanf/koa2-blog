@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "async-validator": "^3.2.3",
+    "bcryptjs": "^2.4.3",
     "dayjs": "^1.8.19",
     "debug": "^4.1.1",
     "koa": "^2.7.0",
