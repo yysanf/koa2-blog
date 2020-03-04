@@ -8,7 +8,7 @@ module.exports = {
       password: 'root'
     },
     security: {
-      secretKey: "secretKey",
+      secretKey: "wsxcftynmko",
       // 过期时间 1小时
       expiresIn: 60 * 60
     },

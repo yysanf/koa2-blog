@@ -31,7 +31,7 @@ class AdminDao {
     if (!admin) {
       throw new global.errs.AuthFailed('账号不存在或者密码不正确')
     }
-    const correct = bcryptjs.compareSync(password, admin.password1)
+    const correct = bcryptjs.compareSync(password, admin.password)
     if (!correct) {
       throw new global.errs.AuthFailed('账号不存在或者密码不正确')
     }
