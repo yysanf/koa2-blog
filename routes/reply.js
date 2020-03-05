@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const { res } = require('../lib/helper')
 const reply = require('../dao/reply')
 const { ReplyValidator, IdParamsValidator } = require('../validators/reply')
+const Auth = require('../middlewares/Auth')
 
 router.prefix('/api/v1')
 
@@ -14,7 +15,7 @@ router.post('/reply/create', async (ctx, next) => {
 })
 
 // 删
-router.delete('/reply/:id', async(ctx, next) => {
+router.delete('/reply/:id', new Auth(Auth.SUPER_ADMIN).jwt, async(ctx, next) => {
     await new IdParamsValidator().validate({id: ctx.params.id})
     await reply.destroy(ctx.params.id)
     ctx.body = res.success('删除成功')
@@ -28,7 +29,7 @@ router.get('/reply/:id', async(ctx, next) => {
 })
 
 // 改
-router.put('/reply/create/:id', async (ctx, next) => {
+router.put('/reply/create/:id', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
     await new IdParamsValidator().validate({id: ctx.params.id})
     const data = ctx.request.body
     await new ReplyValidator().validate(data)

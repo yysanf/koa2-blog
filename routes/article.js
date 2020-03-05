@@ -2,11 +2,12 @@ const router = require('koa-router')()
 const { res } = require('../lib/helper')
 const article = require('../dao/article')
 const { ArticleValidator, IdParamsValidator } = require('../validators/article')
+const Auth = require('../middlewares/Auth')
 
 router.prefix('/api/v1')
 
 // 增
-router.post('/article/create', async (ctx, next) => {
+router.post('/article/create', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
   const data = ctx.request.body
   await new ArticleValidator().validate(data)
   const id = await article.create(data)
@@ -14,7 +15,7 @@ router.post('/article/create', async (ctx, next) => {
 })
 
 // 删
-router.delete('/article/:id', async (ctx, next) => {
+router.delete('/article/:id', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
   const id = ctx.params.id
   await new IdParamsValidator().validate({ id })
   await article.destroy(id)
@@ -22,7 +23,7 @@ router.delete('/article/:id', async (ctx, next) => {
 })
 
 // 改
-router.put('/article/:id', async function(ctx, next) {
+router.put('/article/:id', new Auth(Auth.SUPER_ADMIN).jwt, async function(ctx, next) {
   const id = ctx.params.id
   await new IdParamsValidator().validate({ id })
   const data = ctx.request.body

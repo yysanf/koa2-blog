@@ -2,11 +2,12 @@ const router = require('koa-router')()
 const { res } = require('../lib/helper')
 const category = require('../dao/category')
 const { CategoryValidator, IdParamsValidator } = require('../validators/category')
+const Auth = require('../middlewares/Auth')
 
 router.prefix('/api/v1')
 
 // 增
-router.post('/category/create', async (ctx, next) => {
+router.post('/category/create', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
   const data = ctx.request.body
   await new CategoryValidator().validate(data)
   const id = await category.create(data)
@@ -14,7 +15,7 @@ router.post('/category/create', async (ctx, next) => {
 })
 
 // 删
-router.delete('/category/:id', async (ctx, next) => {
+router.delete('/category/:id', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
   const id = ctx.params.id
   await new IdParamsValidator().validate({id})
   await category.destroy(id)
@@ -22,7 +23,7 @@ router.delete('/category/:id', async (ctx, next) => {
 })
 
 // 改
-router.put('/category/:id', async (ctx, next) => {
+router.put('/category/:id', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
   const id = ctx.params.id
   await new IdParamsValidator().validate({id})
   const data = ctx.request.body

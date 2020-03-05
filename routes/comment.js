@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const { res } = require('../lib/helper')
 const comment = require('../dao/comment')
 const { CommentValidator, IdParamsValidator } = require('../validators/comment')
+const Auth = require('../middlewares/Auth')
 
 router.prefix('/api/v1')
 
@@ -14,7 +15,7 @@ router.post('/comment/create', async (ctx, next) => {
 })
 
 // 删
-router.delete('/comment/:id', async (ctx, next) => {
+router.delete('/comment/:id', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
     const id = ctx.params.id
     await new IdParamsValidator().validate({ id })
     await comment.destroy(id)
@@ -22,7 +23,7 @@ router.delete('/comment/:id', async (ctx, next) => {
 })
 
 // 改
-router.put('/comment/:id', async (ctx, next) => {
+router.put('/comment/:id', new Auth(Auth.SUPER_ADMIN).jwt, async (ctx, next) => {
     const id = ctx.params.id
     await new IdParamsValidator().validate({ id })
     const data = ctx.request.body
