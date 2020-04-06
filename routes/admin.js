@@ -18,5 +18,10 @@ router.post('/login', async (ctx, next) => {
   const token = generateToken(user.id, Auth.SUPER_ADMIN)
   ctx.body = res.json(token)
 })
+router.get('/userInfo', new Auth(Auth.ADMIN).jwt, async (ctx, next) => {
+  const id = ctx.auth.uid
+  let info = await admin.detail(id)
+  ctx.body = res.json(info)
+})
 
 module.exports = router

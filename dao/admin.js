@@ -37,6 +37,17 @@ class AdminDao {
     }
     return admin
   }
+  static async detail(id) {
+    const admin = await Admin.scope('bh').findOne({
+      where: {
+        id,
+      },
+    })
+    if (!admin) {
+      throw new global.errs.AuthFailed('账号不存在或者密码不正确')
+    }
+    return admin
+  }
 }
 
 module.exports = AdminDao
